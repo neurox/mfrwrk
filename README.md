@@ -7,7 +7,7 @@ echo password_hash('my_secure_password', PASSWORD_DEFAULT);
 fin exec php -r "echo password_hash('my_secure_password', PASSWORD_DEFAULT) . PHP_EOL;"
 
 ## Process styles
-fin exec npx @tailwindcss/cli -i ./src/css/styles.css -o ./public/styles.css --watch
+fin exec gulp
 
 ## Manage modules.
 
