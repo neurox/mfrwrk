@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+## Module management commands
+##
+## Usage: fin module [command]
+##
+## Commands:
+##   list                    List all available modules
+##   install [module_name]   Install a specific module
+##   uninstall [module_name] Uninstall a specific module
+
+# Abort if anything fails
+set -e
+
+# Get command
+COMMAND=$1
+shift
+
+case "$COMMAND" in
+	list)
+		fin exec php manage-modules.php list
+		;;
+	install)
+		MODULE_NAME=$1
+		if [[ -z "$MODULE_NAME" ]]; then
+			echo "Error: Module name is required"
+			echo "Usage: fin module install [module_name]"
+			exit 1
+		fi
+		fin exec php manage-modules.php install "$MODULE_NAME"
+		;;
+	uninstall)
+		MODULE_NAME=$1
+		if [[ -z "$MODULE_NAME" ]]; then
+			echo "Error: Module name is required"
+			echo "Usage: fin module uninstall [module_name]"
+			exit 1
+		fi
+		fin exec php manage-modules.php uninstall "$MODULE_NAME"
+		;;
+	*)
+		echo "Unknown command: $COMMAND"
+		fin help module
+		exit 1
+		;;
+esac

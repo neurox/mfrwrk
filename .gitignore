@@ -1,0 +1,8 @@
+
+.DS_Store
+.env
+.npmrc
+node_modules
+vendor
+public/uploads
+users.json

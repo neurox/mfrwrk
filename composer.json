@@ -1,0 +1,15 @@
+{
+  "require": {
+    "twig/twig": "^3.0",
+    "flightphp/core": "^3.15",
+    "vlucas/phpdotenv": "^5.6",
+    "j4mie/idiorm": "^1.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Config\\": "config/",
+      "Core\\": "core/",
+      "Modules\\": "modules/"
+    }
+  }
+}

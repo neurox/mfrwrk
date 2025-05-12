@@ -1,0 +1,13 @@
+services:
+  web:
+    extends:
+      file: ${HOME}/.docksal/stacks/services.yml
+      service: nginx
+
+  cli:
+    build: ${PROJECT_ROOT}/.docksal/services/cli
+    extends:
+      file: ${HOME}/.docksal/stacks/services.yml
+      service: cli
+    volumes:
+    - ${PROJECT_ROOT}/.docksal/etc/php/docksal.ini:/usr/local/etc/php/conf.d/zzzz-docksal-local.ini
