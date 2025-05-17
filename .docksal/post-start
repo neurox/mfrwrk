@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+MARKER_FILE=/home/.sqlite3_installed
+
+if ! fin exec test -f "$MARKER_FILE"; then
+    echo "Installing sqlite3 (one-time)..."
+    fin exec bash -c "apt-get update && apt-get install -y sqlite3 && touch $MARKER_FILE"
+else
+    echo "sqlite3 already installed. Skipping..."
+fi

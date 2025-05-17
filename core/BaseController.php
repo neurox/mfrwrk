@@ -8,14 +8,14 @@ use Flight;
  * Base controller class with common functionality for all controllers.
  */
 abstract class BaseController {
-  
+
   /**
    * The Twig instance.
    *
    * @var \Twig\Environment
    */
   protected static $twig;
-  
+
   /**
    * Initialize the controller.
    */
@@ -23,7 +23,7 @@ abstract class BaseController {
     // Get the Twig instance from Flight
     self::$twig = Flight::get('twig');
   }
-  
+
   /**
    * Render a Twig template with the given data.
    *
@@ -36,10 +36,10 @@ abstract class BaseController {
     if (!self::$twig) {
       self::init();
     }
-    
+
     echo self::$twig->render($template, $data);
   }
-  
+
   /**
    * Redirect to the given URL.
    *
@@ -50,7 +50,7 @@ abstract class BaseController {
   protected static function redirect($url, $status = 302) {
     Flight::redirect($url, $status);
   }
-  
+
   /**
    * Get request data.
    *
@@ -60,17 +60,17 @@ abstract class BaseController {
    */
   protected static function input($key = null, $default = null) {
     $request = Flight::request();
-    
+
     if ($key === null) {
       return (object) array_merge(
         (array) $request->query,
         (array) $request->data
       );
     }
-    
+
     return $request->data->$key ?? $request->query->$key ?? $default;
   }
-  
+
   /**
    * Get session data or set session data.
    *
@@ -79,15 +79,12 @@ abstract class BaseController {
    * @return mixed Session data if getting, or null if setting
    */
   protected static function session($key, $value = null) {
-    if (session_status() === PHP_SESSION_NONE) {
-      session_start();
-    }
-    
+    // No need to start the session here anymore
     if ($value !== null) {
       $_SESSION[$key] = $value;
       return null;
     }
-    
+
     return $_SESSION[$key] ?? null;
   }
 }

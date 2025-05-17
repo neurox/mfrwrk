@@ -1,13 +1,17 @@
 <?php
 
 require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/config/config.php';
-require_once __DIR__ . '/core/DB.php';
-require_once __DIR__ . '/core/Schema.php';
-require_once __DIR__ . '/core/ModuleInterface.php';
+
+use Core\Config;
+use Core\DB;
+use Core\Schema;
+use Core\ModuleInterface;
+
+// Load environment variables and config.
+Config::load();
 
 // Initialize DB
-DB::init($config['db']);
+DB::init(Config::get('db'));
 Schema::init(DB::get());
 
 // Get all available modules

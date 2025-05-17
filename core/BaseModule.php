@@ -6,7 +6,7 @@ namespace Core;
  * Base module class.
  */
 abstract class BaseModule implements ModuleInterface {
-  
+
   /**
    * Register the module routes, templates, etc.
    * This method is called when the application starts.

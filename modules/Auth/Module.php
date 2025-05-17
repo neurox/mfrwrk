@@ -3,10 +3,11 @@
 namespace Modules\Auth;
 
 use Flight;
-use DB;
-use Schema;
+use Core\DB;
+use Core\Schema;
 use Core\ModuleInterface;
 use Core\BaseModule;
+use Modules\Auth\Helpers\UserHelper;
 
 /**
  * Auth module.
@@ -22,10 +23,24 @@ class Module extends BaseModule {
   public static function register() {
     // Set templates path for this module
     self::$templatesPath = __DIR__ . '/templates';
-    
+
     // Add this module's templates directory to Twig loader
     $currentLoader = Flight::get('twig')->getLoader();
     $currentLoader->addPath(self::$templatesPath, 'Auth');
+
+    // Add global variables to Twig.
+    Flight::before('start', function () {
+      $twig = Flight::get('twig');
+      $userHelper = new UserHelper();
+      $twig->addGlobal('user_is_logged', $userHelper->isUserLogged());
+      $twig->addGlobal('user_is_admin', $userHelper->isAdmin());
+      $twig->addGlobal('user_data', $userHelper->getUserData());
+    });
+
+    // Start session.
+    if (session_status() === PHP_SESSION_NONE) {
+      session_start();
+    }
 
     // Register routes
     parent::registerRoutes();
