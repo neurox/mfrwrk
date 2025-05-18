@@ -3,7 +3,7 @@
  * Config class to load and access app configuration.
  */
 
-namespace Core;
+namespace Config;
 
 use Dotenv\Dotenv;
 

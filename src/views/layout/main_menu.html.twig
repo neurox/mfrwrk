@@ -42,13 +42,18 @@
                     <i class="fa-light fa-user"></i> {{ user_data.username }}
                   </a>
                   <ul class="dropdown-menu">
+                     <li><a class="dropdown-item" href="/admin/dashboard">Panel Principal</a></li>
                     <li><a class="dropdown-item" href="#">Mi Cuenta</a></li>
-                    <li><a class="dropdown-item" href="/auth/logout">Cerrar Sesión</a></li>
+                    <li>
+                      <a class="dropdown-item" href="/auth/logout">
+                        <i class="fa-light fa-right-from-bracket"></i>  Cerrar Sesión
+                      </a>
+                    </li>
                   </ul>
                 </li>
               {% else %}
                 <li class="nav-item">
-                  <a class="nav-link" aria-current="page" href="/auth/login">
+                  <a class="nav-link {% if current_path == '/auth/login' %}disabled{% endif %}" aria-current="page" href="/auth/login">
                     Iniciar Sesión <i class="fa-light fa-right-to-bracket"></i>
                   </a>
                 </li>

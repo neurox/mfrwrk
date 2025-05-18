@@ -1,7 +1,7 @@
 <?php
 
 use Core\DB;
-use Core\Config;
+use Config\Config;
 
 // Load environment variables and config.
 Config::load();

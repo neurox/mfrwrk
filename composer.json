@@ -8,8 +8,8 @@
   "autoload": {
     "psr-4": {
       "Config\\": "config/",
-      "Core\\": "core/",
-      "Modules\\": "modules/"
+      "Core\\": "src/core/",
+      "Modules\\": "src/modules/"
     }
   }
 }

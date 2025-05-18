@@ -13,13 +13,14 @@
     </div>
   {% endif %}
 
-  {% if error %}
+  {% for error in errors %}
     <div class="alert alert-danger" role="alert">
       {{ error }}
     </div>
-  {% endif %}
+  {% endfor %}
 
   <form method="post" action="/auth/login">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <div class="form-floating mb-3">
       <input type="text" class="form-control" id="floatingInput" name="username" placeholder="name@example.com">
       <label for="floatingInput">Usuario/Email</label>
@@ -28,7 +29,12 @@
       <input type="password" class="form-control" id="floatingPassword" name="password" placeholder="Password">
       <label for="floatingPassword">Contraseña</label>
     </div>
-    <button type="submit" class="btn btn-lg btn-primary">Iniciar Sesión</button>
+    <div class="row">
+      <button type="submit" class="btn btn-lg btn-primary">Iniciar Sesión</button>
+    </div>
+    <div class="row">
+      <a class="btn btn-link" href="/auth/register" role="button">Registrarse</button>
+    </div>
   </form>
 </div>
 

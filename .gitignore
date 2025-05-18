@@ -3,6 +3,7 @@
 .env
 .npmrc
 *.sqlite
+database
 node_modules
 vendor
 public/uploads

@@ -7,19 +7,29 @@
 <div class="col-md-6 col-lg-8">
   <h1 class="m-5">{{ title }}</h1>
 
-  <form method="post" action="/admin/register">
+  {% if errors.csrf_token %}
+    <div class="alert alert-danger" role="alert">
+      {{ errors.csrf_token }}
+    </div>
+  {% endif %}
+
+  <form method="post" action="/auth/register">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
     <div class="row">
       <div class="col-lg-6">
         <div class="form-floating mb-3">
           <input
             type="text"
-            class="form-control"
+            class="form-control {% if errors.firstName %}is-invalid{% endif %}"
             id="firstName"
             name="firstName"
             placeholder="Nombre de usuario"
             value="{{ old.firstName|default('') }}"
           >
           <label for="firstName">Nombre</label>
+          <div id="validationFirstNameFeedback" class="invalid-feedback">
+            {{ errors.firstName }}
+          </div>
         </div>
       </div>
 
@@ -27,13 +37,16 @@
         <div class="form-floating mb-3">
           <input
             type="text"
-            class="form-control"
+            class="form-control {% if errors.lastName %}is-invalid{% endif %}"
             id="lastName"
             name="lastName"
             placeholder="Nombre de usuario"
             value="{{ old.lastName|default('') }}"
           >
           <label for="lastName">Apellido</label>
+          <div id="validationLastNameFeedback" class="invalid-feedback">
+            {{ errors.lastName }}
+          </div>
         </div>
       </div>
     </div>
@@ -57,25 +70,31 @@
     <div class="form-floating mb-3">
       <input
         type="text"
-        class="form-control"
+        class="form-control {% if errors.email %}is-invalid{% endif %}"
         id="email"
         name="email"
         placeholder="name@example.com"
         value="{{ old.email|default('') }}"
       >
       <label for="email">Email</label>
+      <div id="validationEmailFeedback" class="invalid-feedback">
+        {{ errors.email }}
+      </div>
     </div>
 
     <div class="form-floating mb-3">
       <input
         type="password"
-        class="form-control"
+        class="form-control {% if errors.password %}is-invalid{% endif %}"
         id="password"
         name="password"
         placeholder="Password"
         value="{{ old.password|default('') }}"
       >
       <label for="password">Contraseña</label>
+      <div id="validationPasswordFeedback" class="invalid-feedback">
+        {{ errors.password }}
+      </div>
     </div>
 
     <div class="form-floating mb-3">

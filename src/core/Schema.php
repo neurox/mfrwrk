@@ -20,9 +20,10 @@ class Schema {
    * Ensure table exists.
    */
   public static function ensureTable($table, $schema) {
-  
+
     // Check if table exists.
-    $stmt = self::$pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name='$table'");
+    $stmt = self::$pdo->prepare("SELECT name FROM sqlite_master WHERE type='table' AND name=?");
+    $stmt->execute([$table]);
     $exists = $stmt->fetchColumn();
 
     // If table doesn't exist.
@@ -38,14 +39,8 @@ class Schema {
       $columnsStr = implode(",\n", $columns);
 
       // Create table.
-      $sql = "
-        CREATE TABLE $table (
-          $columnsStr
-        );
-      ";
-
-      // Run SQL.
-      self::$pdo->exec($sql);
+      $stmt = self::$pdo->prepare('CREATE TABLE ? (?);');
+      $stmt->execute([$table, $columnsStr]);
 
     } else {
       /* Table exists — ensure columns exist
@@ -63,9 +58,9 @@ class Schema {
       }
 
       // Get current columns.
-      $columns = self::$pdo
-        ->query("PRAGMA table_info($table)")
-        ->fetchAll(PDO::FETCH_ASSOC);
+      $stmt = self::$pdo->prepare("PRAGMA table_info(?)");
+      $stmt->execute([$table]);
+      $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
       // Get existing column names.
       $existingCols = array_column($columns, 'name');
@@ -80,7 +75,8 @@ class Schema {
         $col = $match[1];
         if (!in_array($col, $existingCols)) {
           // Add column.
-          self::$pdo->exec("ALTER TABLE $table ADD COLUMN $definition");
+          $stmt = self::$pdo->prepare("ALTER TABLE ? ADD COLUMN ?");
+          $stmt->execute([$table, $definition]);
         }
       }
     }

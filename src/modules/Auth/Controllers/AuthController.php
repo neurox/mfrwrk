@@ -34,7 +34,8 @@ class AuthController extends BaseController {
     // You can now use the render method from BaseController
     return self::render('@Auth/login.html.twig', [
       'title' => 'Login',
-      'error' => self::input('error')
+      'errors' => self::input('errors'),
+      'csrf_token' => self::generateCsrfToken(),
     ]);
   }
 
@@ -44,7 +45,8 @@ class AuthController extends BaseController {
   public function registerForm() {
     return self::render('@Auth/register.html.twig', [
       'title' => 'Create Admin',
-      'error' => self::input('error')
+      'errors' => self::input('errors'),
+      'csrf_token' => self::generateCsrfToken(),
     ]);
   }
 
@@ -57,18 +59,25 @@ class AuthController extends BaseController {
     $data = $request->data->getData();
     $errors = [];
 
-    // Validate credentials (replace with your actual authentication logic)
+    // Validate form data.
+    if (!$this->validateCsrfToken($data['csrf_token'] ?? '')) {
+      $errors['csrf_token'] = 'Invalid Form, refresh the page and try again';
+    }
+
     if (empty($data['username'])) {
       $errors['username'] = 'Ingrese un nombre de usuario';
     }
-    elseif (empty($data['password'])) {
+
+    if (empty($data['password'])) {
       $errors['password'] = 'Ingrese una contraseña';
     }
-    else {
+
+    // If no errors, check if user exists and password is correct.
+    if (empty($errors)) {
+
       // Set session using the session method.
       $user = ORM::for_table('users')
-        ->where_equal('username', $data['username'])
-        ->where_raw('(email = ? OR username = ?)', [$data['username'], $data['username']])
+        ->where_raw('email = ? OR username = ?', [$data['username'], $data['username']])
         ->find_one();
 
       // Check if user exists and password is correct.
@@ -81,19 +90,15 @@ class AuthController extends BaseController {
         self::redirect('/admin/dashboard');
       }
       else {
-        // Redirect to login page with error message.
-        return self::render('@Auth/login.html.twig', [
-          'title' => 'Login',
-          'error' => 'Nombre de usuario o contraseña incorrectos',
-        ]);
+        $errors['username'] = 'El nombre de usuario o contraseña son incorrectos';
       }
     }
 
     // Redirect to login page with error message.
-    return self::render('@Auth/register.html.twig', [
-      'title' => 'Register User',
-      'old' => $data,
+    return self::render('@Auth/login.html.twig', [
+      'title' => 'Login',
       'errors' => $errors,
+      'csrf_token' => self::generateCsrfToken(),
     ]);
   }
 
@@ -101,9 +106,30 @@ class AuthController extends BaseController {
     // Get form data.
     $request = Flight::request();
     $data = $request->data->getData();
+    $errors = [];
 
     // Validate form data.
-    $errors = [];
+    if (!$this->validateCsrfToken($data['csrf_token'] ?? '')) {
+      $errors['csrf_token'] = 'Formulario invalido, recargue la pagina y vuelva a intentarlo';
+    }
+
+    // Sanitize form data.
+    $data['username'] = trim($data['username']);
+    $data['username'] = strtolower($data['username']);
+    $data['email'] = trim($data['email']);
+    $data['email'] = strtolower($data['email']);
+
+    // Validate first name.
+    if ($data['firstName'] === '') {
+      $errors['firstName'] = 'El nombre es requerido';
+    }
+
+    // Validate last name.
+    if ($data['lastName'] === '') {
+      $errors['lastName'] = 'El apellido es requerido';
+    }
+
+    // Validate username.
     if ($data['username'] === '') {
       $errors['username'] = 'El nombre de usuario es requerido';
     } elseif (!ctype_alnum($data['username'])) {
@@ -119,6 +145,13 @@ class AuthController extends BaseController {
       }
     }
 
+    // Validate email.
+    if ($data['email'] === '') {
+      $errors['email'] = 'El correo es requerido';
+    } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+      $errors['email'] = 'Ingrese un correo valido';
+    }
+
     // Check if email already exists.
     $existing_user = ORM::for_table('users')
       ->where_equal('email', $data['email'])
@@ -126,6 +159,16 @@ class AuthController extends BaseController {
 
     if ($existing_user) {
       $errors['email'] = 'El correo ya esta registrado';
+    }
+
+    // Validate password.
+    if ($data['password'] === '') {
+      $errors['password'] = 'La contraseña es requerida';
+    }
+
+    // Validate password confirmation.
+    if ($data['password_confirmation'] === '') {
+      $errors['password_confirmation'] = 'La confirmacion de la contraseña es requerida';
     }
 
     // Validate form data.
@@ -154,7 +197,8 @@ class AuthController extends BaseController {
         'title' => 'Admin Access',
         'old' => $data,
         'errors' => $errors,
-        'message' => 'El usuario ' . $data['username'] . ' ha sido creado exitosamente!'
+        'message' => 'El usuario ' . $data['username'] . ' ha sido creado exitosamente!',
+        'csrf_token' => self::generateCsrfToken(),
       ]);
     }
     else {
@@ -162,6 +206,7 @@ class AuthController extends BaseController {
         'title' => 'Register User',
         'old' => $data,
         'errors' => $errors,
+        'csrf_token' => self::generateCsrfToken(),
       ]);
     }
   }

@@ -9,5 +9,5 @@ services:
     extends:
       file: ${HOME}/.docksal/stacks/services.yml
       service: cli
-    volumes:
-    - ${PROJECT_ROOT}/.docksal/etc/php/docksal.ini:/usr/local/etc/php/conf.d/zzzz-docksal-local.ini
+    # volumes:
+    # - ${PROJECT_ROOT}/.docksal/etc/php/docksal.ini:/usr/local/etc/php/conf.d/zzzz-docksal-local.ini
