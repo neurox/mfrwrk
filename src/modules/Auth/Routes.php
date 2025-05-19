@@ -46,6 +46,7 @@ class Routes {
 
     Flight::group('/admin', function() {
       Flight::route('GET /dashboard', ['\Modules\Auth\Controllers\AdminController', 'dashboard']);
+      Flight::route('GET /account', ['\Modules\Auth\Controllers\AdminController', 'account']);
     });
 
     // // Admin group.

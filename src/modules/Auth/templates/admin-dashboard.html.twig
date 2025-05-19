@@ -1,13 +1,9 @@
-{% extends 'layout/_base.html.twig' %}
+{% extends '@Auth/layout/_admin_page.html.twig' %}
 
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-
-<div class="col-md-6 col-lg-8">
   <h1 class="m-5">{{ title }}</h1>
 
-  <p>Bienvenido {{ user_data.username }}</p>
-</div>
-
+  <p>Bienvenido {{ user_data.name }}</p>
 {% endblock %}

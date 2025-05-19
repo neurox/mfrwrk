@@ -38,9 +38,7 @@ class Module extends BaseModule {
     });
 
     // Start session.
-    if (session_status() === PHP_SESSION_NONE) {
-      session_start();
-    }
+    UserHelper::startSession();
 
     // Register routes
     parent::registerRoutes();

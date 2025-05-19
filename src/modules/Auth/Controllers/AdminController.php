@@ -24,14 +24,23 @@ class AdminController extends BaseController {
       self::redirect('/auth/login');
     }
 
-    // echo '<pre>';
-    // var_dump($this->userHelper->getUserData());
-    // echo '</pre>';
-
-    // You can now use the render method from BaseController
+    /**
+     * Render the admin dashboard.
+     */
     return self::render('@Auth/admin-dashboard.html.twig', [
-      'title' => 'Dashboard',
+      'title' => 'Panel de Control',
       'error' => self::input('error')
     ]);
   }
+
+  /**
+   * Display the account page.
+   */
+  public function account() {
+    return self::render('@Auth/account.html.twig', [
+      'title' => 'Mi Cuenta',
+      'error' => self::input('error')
+    ]);
+  }
+
 }

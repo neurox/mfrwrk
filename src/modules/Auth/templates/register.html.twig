@@ -1,10 +1,10 @@
-{% extends 'layout/_base.html.twig' %}
+{% extends 'layout/_page.html.twig' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
 
-<div class="col-md-6 col-lg-8">
+<div class="col-lg-6">
   <h1 class="m-5">{{ title }}</h1>
 
   {% if errors.csrf_token %}
@@ -111,7 +111,17 @@
         {{ errors.password_confirmation }}
       </div>
     </div>
-    <button type="submit" class="btn btn-lg btn-primary">Crear Usuario</button>
+    <div class="row justify-content-md-center align-items-center">
+        <div class="col-lg-6 d-grid gap-2">
+          <button type="submit" class="btn btn-lg btn-primary">Crear Usuario</button>
+        </div>
+        <div class="col-lg-6 d-flex justify-content-center align-items-center">
+          <span>
+            Ya estas registrado?
+            <a class="btn btn-link" href="/auth/login" role="button">Iniciar Sesión</a>
+          </span>
+        </div>
+    </div>
   </form>
 </div>
 

@@ -7,12 +7,18 @@
   <link href="/assets/css/styles.css" rel="stylesheet">
 </head>
 <body>
-  <div class="container text-center">
+  <div class="container-fluid">
     <div class="row justify-content-md-center">
       {% include 'layout/main_menu.html.twig' %}
-    <div>
-    <div class="row justify-content-md-center">
-      {% block content %}{% endblock %}
+    </div>
+    <div class="row">
+      {% include 'layout/account_menu.html.twig' %}
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          {% block header %}{% endblock %}
+        </div>
+          {% block content %}{% endblock %}
+      </main>
     </div>
   </div>
   <script async src="/assets/js/bootstrap.bundle.min.js" ></script>
