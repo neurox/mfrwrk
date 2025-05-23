@@ -4,11 +4,17 @@ namespace Modules\Auth\Controllers;
 
 use Core\BaseController;
 use Modules\Auth\Helpers\UserHelper;
-use ORM;
-use Flight;
 
+/**
+ * Controller for admin sections.
+ */
 class AdminController extends BaseController {
 
+  /**
+   * User helper.
+   *
+   * @var \Modules\Auth\Helpers\UserHelper
+   */
   private $userHelper;
 
   public function __construct() {
@@ -19,27 +25,26 @@ class AdminController extends BaseController {
    * Display the admin dashboard.
    */
   public function dashboard() {
-    // Check if user is logged in.
-    if (!$this->userHelper->isUserLogged()) {
+
+    // Check if user is admin.
+    if ($this->userHelper->isAdmin()) {
+      self::render('@Auth/admin-dashboard.html.twig', [
+        'title' => 'Dashboard',
+        'user_data' => $this->userHelper->getUserData(),
+      ]);
+    }
+    else {
       self::redirect('/auth/login');
     }
-
-    /**
-     * Render the admin dashboard.
-     */
-    return self::render('@Auth/admin-dashboard.html.twig', [
-      'title' => 'Panel de Control',
-      'error' => self::input('error')
-    ]);
   }
 
   /**
    * Display the account page.
    */
   public function account() {
-    return self::render('@Auth/account.html.twig', [
+    self::render('@Auth/account.html.twig', [
       'title' => 'Mi Cuenta',
-      'error' => self::input('error')
+      'error' => self::input('error'),
     ]);
   }
 

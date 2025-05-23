@@ -3,7 +3,7 @@
 namespace Core;
 
 /**
- * Validation class.
+ * Validates the form data.
  */
 class Validation {
 
@@ -17,15 +17,17 @@ class Validation {
   /**
    * Validate form data.
    *
-   * @param array $data Form data
-   * @param array $rules Validation rules
+   * @param array $data
+   *   Form data.
+   * @param array $rules
+   *   Validation rules.
    */
   public static function validate($data, $rules) {
     self::$errors = [];
 
     // Validate each field.
     foreach ($rules as $field => $ruleset) {
-      $value = $data[$field] ?? null;
+      $value = $data[$field] ?? NULL;
       $ruleParts = explode('|', $ruleset);
       $fieldName = self::getFieldName($field);
 
@@ -87,8 +89,11 @@ class Validation {
   /**
    * Get field name.
    *
-   * @param string $field Field name
-   * @return string Field name
+   * @param string $field
+   *   Field name.
+   *
+   * @return string
+   *   Field name.
    */
   public static function getFieldName($field) {
     // Field names.
@@ -108,8 +113,11 @@ class Validation {
   /**
    * Capitalize a string.
    *
-   * @param string $str String to capitalize
-   * @return string Capitalized string
+   * @param string $str
+   *   String to capitalize.
+   *
+   * @return string
+   *   Capitalized string.
    */
   public static function capStr($str) {
     return ucfirst(strtolower($str));
@@ -118,7 +126,8 @@ class Validation {
   /**
    * Get validation errors.
    *
-   * @return array Validation errors
+   * @return array
+   *   Validation errors.
    */
   public static function getErrors() {
     return self::$errors;
@@ -128,6 +137,7 @@ class Validation {
    * Generate a CSRF token.
    *
    * @return string
+   *   CSRF token.
    */
   public static function generateCsrfToken() {
     if (!isset($_SESSION['csrf_token'])) {
@@ -139,8 +149,11 @@ class Validation {
   /**
    * Validate a CSRF token.
    *
-   * @param string $token The token to validate
+   * @param string $token
+   *   The token to validate.
+   *
    * @return bool
+   *   True if the token is valid, false otherwise.
    */
   public static function validateCsrfToken($token) {
     return isset($_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $token);

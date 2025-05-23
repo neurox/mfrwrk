@@ -3,8 +3,6 @@
 namespace Modules\Auth\Helpers;
 
 use Core\BaseController;
-use ORM;
-use Flight;
 
 /**
  * User helper class.
@@ -59,7 +57,7 @@ class UserHelper extends BaseController {
    * Check if admin user exists.
    */
   public static function existAdminUser() {
-    $userCount = ORM::for_table('users')
+    $userCount = \ORM::for_table('users')
       ->where_equal('role', 'admin')
       ->count();
     return $userCount > 0;
@@ -69,7 +67,7 @@ class UserHelper extends BaseController {
    * Check if user is logged in.
    */
   public static function isUserLogged() {
-    return self::session('user') !== null;
+    return self::session('user') !== NULL;
   }
 
   /**
@@ -90,22 +88,23 @@ class UserHelper extends BaseController {
 
       // Set session cookie parameters.
       if (PHP_VERSION_ID >= 70300) {
-          session_set_cookie_params([
-              'lifetime' => 3600,
-              'path' => '/',
-              'domain' => $_SERVER['HTTP_HOST'],
-              'secure' => $secure,
-              'httponly' => true,
-              'samesite' => $samesite
-          ]);
-      } else {
-          session_set_cookie_params(
-              3600,
-              '/; samesite=' . $samesite,
-              $_SERVER['HTTP_HOST'],
-              $secure,
-              true
-          );
+        session_set_cookie_params([
+          'lifetime' => 3600,
+          'path' => '/',
+          'domain' => $_SERVER['HTTP_HOST'],
+          'secure' => $secure,
+          'httponly' => TRUE,
+          'samesite' => $samesite,
+        ]);
+      }
+      else {
+        session_set_cookie_params(
+          3600,
+          '/; samesite=' . $samesite,
+          $_SERVER['HTTP_HOST'],
+          $secure,
+          TRUE,
+        );
       }
 
       // Start the session.

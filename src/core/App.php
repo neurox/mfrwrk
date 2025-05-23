@@ -1,19 +1,26 @@
 <?php
 
+/**
+ * @file
+ * Main app file.
+ */
+
 use Core\DB;
 use Config\Config;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 // Load environment variables and config.
 Config::load();
 
 // Initialize DB (with Idiorm).
 DB::init(Config::get('db'));
-Flight::set('db', DB::get());
+\Flight::set('db', DB::get());
 
 // Load Twig.
-$loader = new \Twig\Loader\FilesystemLoader(__DIR__ . '/../views');
-$twig = new \Twig\Environment($loader, [
-    'cache' => Config::get('env') === 'dev' ? false : __DIR__ . '/../cache',
+$loader = new FilesystemLoader(__DIR__ . '/../views');
+$twig = new Environment($loader, [
+  'cache' => Config::get('env') === 'dev' ? FALSE : __DIR__ . '/../cache',
 ]);
 
 // Add global variables to Twig.
@@ -21,35 +28,45 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $twig->addGlobal('current_path', $currentPath);
 
 // Set Twig to Flight.
-Flight::set('twig', $twig);
+\Flight::set('twig', $twig);
 
 // Home route.
-Flight::route('GET /', function () {
-    echo Flight::get('twig')->render('home.html.twig');
+\Flight::route('GET /', function () {
+  echo \Flight::get('twig')->render('home.html.twig');
 });
 
-// Function to autoload modules.
-function loadModules(): array {
-    $modulesPath = __DIR__ . '/../modules';
-    $modules = [];
+/**
+ * Load all modules.
+ *
+ * @return array
+ *   An array of modules.
+ */
+function load_modules(): array {
+  $modulesPath = __DIR__ . '/../modules';
+  $modules = [];
 
-    if (is_dir($modulesPath)) {
-        foreach (scandir($modulesPath) as $dir) {
-            if ($dir === '.' || $dir === '..') continue;
+  if (is_dir($modulesPath)) {
+    foreach (scandir($modulesPath) as $dir) {
 
-            $modulePath = $modulesPath . '/' . $dir;
-            if (is_dir($modulePath) && file_exists($modulePath . '/Module.php')) {
-                require_once($modulePath . '/Module.php');
-                $moduleClass = "\\Modules\\{$dir}\\Module";
-                $modules[$dir] = $moduleClass;
-            }
-        }
+      // Skip hidden directories.
+      if ($dir === '.' || $dir === '..') {
+        continue;
+      }
+
+      // Check if module exists.
+      $modulePath = $modulesPath . '/' . $dir;
+      if (is_dir($modulePath) && file_exists($modulePath . '/Module.php')) {
+        require_once $modulePath . '/Module.php';
+        $moduleClass = "\\Modules\\{$dir}\\Module";
+        $modules[$dir] = $moduleClass;
+      }
     }
+  }
 
-    return $modules;
+  return $modules;
 }
 
 // Load and register all modules.
-foreach (loadModules() as $name => $class) {
-    $class::register();
+foreach (load_modules() as $name => $class) {
+  $class::register();
 }

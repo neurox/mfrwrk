@@ -2,7 +2,7 @@
 
 namespace Core;
 
-use Flight;
+use Twig\Environment;
 
 /**
  * Base controller class with common functionality for all controllers.
@@ -12,28 +12,33 @@ abstract class BaseController {
   /**
    * The Twig instance.
    *
-   * @var \Twig\Environment
+   * @var \Twig\Environment|null
+   *   The Twig instance.
    */
-  protected static $twig;
+  protected static ?Environment $twig = NULL;
 
   /**
    * Initialize the controller.
    */
   public static function init() {
-    // Get the Twig instance from Flight
-    self::$twig = Flight::get('twig');
+    // Get Twig instance.
+    self::$twig = \Flight::get('twig');
   }
 
   /**
    * Render a Twig template with the given data.
    *
-   * @param string $template The template name to render
-   * @param array $data Data to pass to the template
-   * @return void Outputs the rendered template
+   * @param string $template
+   *   The template to render.
+   * @param array $data
+   *   The data to pass to the template.
+   *
+   * @return void
+   *   Renders the template.
    */
-  protected static function render($template, array $data = []) {
-    // Initialize if not already done
-    if (!self::$twig) {
+  protected static function render($template, array $data = []) : void {
+    // Initialize if not already done.
+    if (self::$twig === NULL) {
       self::init();
     }
 
@@ -43,25 +48,33 @@ abstract class BaseController {
   /**
    * Redirect to the given URL.
    *
-   * @param string $url The URL to redirect to
-   * @param int $status HTTP status code (default: 302)
+   * @param string $url
+   *   The URL to redirect to.
+   * @param int $status
+   *   The HTTP status code (default: 302).
+   *
    * @return void
+   *   Redirects to the given URL.
    */
   protected static function redirect($url, $status = 302) {
-    Flight::redirect($url, $status);
+    \Flight::redirect($url, $status);
   }
 
   /**
    * Get request data.
    *
-   * @param string $key The data key to get (optional)
-   * @param mixed $default Default value if key not found
-   * @return mixed Request data
+   * @param string $key
+   *   The data key to get (optional).
+   * @param mixed $default
+   *   Default value if key not found.
+   *
+   * @return mixed
+   *   Request data.
    */
-  protected static function input($key = null, $default = null) {
-    $request = Flight::request();
+  protected static function input($key = NULL, $default = NULL) {
+    $request = \Flight::request();
 
-    if ($key === null) {
+    if ($key === NULL) {
       return (object) array_merge(
         (array) $request->query,
         (array) $request->data
@@ -74,18 +87,22 @@ abstract class BaseController {
   /**
    * Get session data or set session data.
    *
-   * @param string $key The session key
-   * @param mixed $value The value to set (optional)
-   * @return mixed Session data if getting, or null if setting
+   * @param string $key
+   *   The session key.
+   * @param mixed $value
+   *   The value to set (optional).
+   *
+   * @return mixed
+   *   Session data if getting, or null if setting
    */
-  protected static function session($key, $value = null) {
-    // No need to start the session here anymore
-    if ($value !== null) {
+  protected static function session($key, $value = NULL) {
+    // No need to start the session here anymore.
+    if ($value !== NULL) {
       $_SESSION[$key] = $value;
-      return null;
+      return NULL;
     }
 
-    return $_SESSION[$key] ?? null;
+    return $_SESSION[$key] ?? NULL;
   }
 
 }

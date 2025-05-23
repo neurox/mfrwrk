@@ -11,5 +11,16 @@
       "Core\\": "src/core/",
       "Modules\\": "src/modules/"
     }
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^2.1",
+    "squizlabs/php_codesniffer": "^3.13",
+    "drupal/coder": "^8.3",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }

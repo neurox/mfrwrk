@@ -5,15 +5,19 @@ namespace Modules\Auth\Controllers;
 use Core\BaseController;
 use Core\Validation;
 use Modules\Auth\Helpers\UserHelper;
-use ORM;
-use Flight;
 
 /**
- * Class AuthController
+ * Autentication of the user.
+ *
  * @package Modules\Auth\Controllers
  */
 class AuthController extends BaseController {
 
+  /**
+   * User helper class.
+   *
+   * @var \Modules\Auth\Helpers\UserHelper
+   */
   private $userHelper;
 
   /**
@@ -24,34 +28,31 @@ class AuthController extends BaseController {
   }
 
   /**
-   * Display the login form
+   * Display the login form.
    */
   public function loginForm() {
     // Check if user is already logged in.
     if ($this->userHelper->isUserLogged()) {
-      self::redirect('/admin/dashboard');
+      self::render('@Auth/admin-dashboard.html.twig', [
+        'title' => 'Dashboard',
+        'user_data' => $this->userHelper->getUserData(),
+      ]);
     }
-
-    // Check if admin user exists.
-    $admin_user = $this->userHelper->existAdminUser();
-
-    if (!$admin_user) {
-      self::redirect('/admin/register');
+    else {
+      // Render the login form.
+      self::render('@Auth/login.html.twig', [
+        'title' => 'Login',
+        'errors' => self::input('errors'),
+        'csrf_token' => Validation::generateCsrfToken(),
+      ]);
     }
-
-    // You can now use the render method from BaseController
-    return self::render('@Auth/login.html.twig', [
-      'title' => 'Login',
-      'errors' => self::input('errors'),
-      'csrf_token' => Validation::generateCsrfToken(),
-    ]);
   }
 
   /**
-   * Display the login form
+   * Display the login form.
    */
   public function registerForm() {
-    return self::render('@Auth/register.html.twig', [
+    self::render('@Auth/register.html.twig', [
       'title' => 'Create Admin',
       'errors' => self::input('errors'),
       'csrf_token' => Validation::generateCsrfToken(),
@@ -59,11 +60,11 @@ class AuthController extends BaseController {
   }
 
   /**
-   * Process login form submission
+   * Process login form submission.
    */
   public function login() {
     // Get form data.
-    $request = Flight::request();
+    $request = \Flight::request();
     $data = $request->data->getData();
     $errors = [];
 
@@ -73,17 +74,17 @@ class AuthController extends BaseController {
     // If user is locked, show error message.
     if ($lockStatus['locked']) {
       $waitMinutes = ceil($lockStatus['wait_time'] / 60);
-      return self::render('@Auth/login.html.twig', [
-          'title' => 'Login',
-          'error' => "Haz excedido el número máximo de intentos. Por favor, inténtalo de nuevo en {$waitMinutes} minutos.",
-          'csrf_token' => $this->generateCsrfToken()
+      self::render('@Auth/login.html.twig', [
+        'title' => 'Login',
+        'error' => "Haz excedido el número máximo de intentos. Por favor, inténtalo de nuevo en {$waitMinutes} minutos.",
+        'csrf_token' => Validation::generateCsrfToken(),
       ]);
     }
 
     $rules = [
-        'csrf_token' => 'csrf_token',
-        'username' => 'required',
-        'password' => 'required',
+      'csrf_token' => 'csrf_token',
+      'username' => 'required',
+      'password' => 'required',
     ];
 
     // Validate form data.
@@ -94,47 +95,58 @@ class AuthController extends BaseController {
     if (empty($errors)) {
 
       // Set session using the session method.
-      $user = ORM::for_table('users')
+      $user = \ORM::for_table('users')
         ->where_raw('email = ? OR username = ?', [$data['username'], $data['username']])
         ->find_one();
 
       // Check if user exists and password is correct.
       if ($user && password_verify($data['password'], $user->password)) {
 
+        // Record login attempt.
+        $this->recordLoginAttempt($data['username'], TRUE);
+
         // Set user data in session.
         $this->userHelper->setUserData($user);
 
-        // Redirect using the redirect method
+        // Redirect to admin dashboard.
         self::redirect('/admin/dashboard');
       }
       else {
+        // Record login attempt.
+        $this->recordLoginAttempt($data['username'], FALSE);
+
+        // Set error message.
         $errors['username'] = 'El nombre de usuario y/o contraseña son incorrectos';
       }
     }
-
-    // Redirect to login page with error message.
-    return self::render('@Auth/login.html.twig', [
-      'title' => 'Login',
-      'old' => $data,
-      'errors' => $errors,
-      'csrf_token' => Validation::generateCsrfToken(),
-    ]);
+    else {
+      // Redirect to login page with error message.
+      self::render('@Auth/login.html.twig', [
+        'title' => 'Login',
+        'old' => $data,
+        'errors' => $errors,
+        'csrf_token' => Validation::generateCsrfToken(),
+      ]);
+    }
   }
 
+  /**
+   * Process register form submission.
+   */
   public function register() {
     // Get form data.
-    $request = Flight::request();
+    $request = \Flight::request();
     $data = $request->data->getData();
     $errors = [];
 
     $rules = [
-        'csrf_token' => 'csrf_token',
-        'firstName' => 'required|alpha|min:3',
-        'lastName' => 'required|alpha|min:3',
-        'username' => 'required|alnum|min:3',
-        'email' => 'required|email',
-        'password' => 'required|min:8',
-        'password_confirmation' => 'required|same:password',
+      'csrf_token' => 'csrf_token',
+      'firstName' => 'required|alpha|min:3',
+      'lastName' => 'required|alpha|min:3',
+      'username' => 'required|alnum|min:3',
+      'email' => 'required|email',
+      'password' => 'required|min:8',
+      'password_confirmation' => 'required|same:password',
     ];
 
     // Validate form data.
@@ -142,7 +154,7 @@ class AuthController extends BaseController {
     $errors = Validation::getErrors();
 
     if (empty($errors)) {
-      $existing_user = ORM::for_table('users')
+      $existing_user = \ORM::for_table('users')
         ->where_equal('username', $data['username'])
         ->find_one();
 
@@ -152,7 +164,7 @@ class AuthController extends BaseController {
       }
 
       // Check if email already exists.
-      $existing_user = ORM::for_table('users')
+      $existing_user = \ORM::for_table('users')
         ->where_equal('email', $data['email'])
         ->find_one();
 
@@ -164,7 +176,7 @@ class AuthController extends BaseController {
     // If no errors, create new user.
     if (empty($errors)) {
       // Create new user.
-      $user = ORM::for_table('users')->create();
+      $user = \ORM::for_table('users')->create();
       $user->username = $data['username'];
       $user->first_name = $data['firstName'];
       $user->last_name = $data['lastName'];
@@ -190,7 +202,7 @@ class AuthController extends BaseController {
       }
 
       // Redirect to login page with error message.
-      return self::render('@Auth/login.html.twig', [
+      self::render('@Auth/login.html.twig', [
         'title' => 'Admin Access',
         'old' => $data,
         'errors' => $errors,
@@ -198,7 +210,7 @@ class AuthController extends BaseController {
       ]);
     }
     else {
-      return self::render('@Auth/register.html.twig', [
+      self::render('@Auth/register.html.twig', [
         'title' => 'Register User',
         'old' => $data,
         'errors' => $errors,
@@ -227,7 +239,7 @@ class AuthController extends BaseController {
     if (!isset($_SESSION['login_attempts'][$username])) {
       $_SESSION['login_attempts'][$username] = [
         'count' => 0,
-        'last_attempt' => 0
+        'last_attempt' => 0,
       ];
     }
 
@@ -243,8 +255,8 @@ class AuthController extends BaseController {
       // Check if user has exceeded lockout time.
       if ($timeElapsed < $lockoutTime) {
         return [
-          'locked' => true,
-          'wait_time' => $lockoutTime - $timeElapsed
+          'locked' => TRUE,
+          'wait_time' => $lockoutTime - $timeElapsed,
         ];
       }
       else {
@@ -254,7 +266,7 @@ class AuthController extends BaseController {
     }
 
     // Return success response.
-    return ['locked' => false];
+    return ['locked' => FALSE];
   }
 
   /**
@@ -268,7 +280,7 @@ class AuthController extends BaseController {
       // Initialize login attempts array.
       $_SESSION['login_attempts'][$username] = [
         'count' => 0,
-        'last_attempt' => 0
+        'last_attempt' => 0,
       ];
     }
 
@@ -281,7 +293,7 @@ class AuthController extends BaseController {
       $attempts['count']++;
     }
     else {
-      // Reset on successful login
+      // Reset on successful login.
       $attempts['count'] = 0;
     }
   }

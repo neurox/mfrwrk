@@ -3,10 +3,16 @@
 namespace Core;
 
 /**
- * Schema class.
+ * The database schema class.
  */
 class Schema {
 
+  /**
+   * The database connection.
+   *
+   * @var \PDO
+   *  The database connection.
+   */
   protected static $pdo;
 
   /**
@@ -32,7 +38,7 @@ class Schema {
       // Build CREATE TABLE statement from schema.
       $columns = [];
       foreach ($schema as $column => $definition) {
-          $columns[] = "$column $definition";
+        $columns[] = "$column $definition";
       }
 
       // Join columns.
@@ -41,14 +47,9 @@ class Schema {
       // Create table.
       $stmt = self::$pdo->prepare('CREATE TABLE ? (?);');
       $stmt->execute([$table, $columnsStr]);
-
-    } else {
-      /* Table exists — ensure columns exist
-        * Extract required columns (excluding id which should already exist)
-        * Get current columns
-        * Get existing column names
-        * Add missing columns
-        */
+    }
+    else {
+      // Get required columns.
       $required = [];
       foreach ($schema as $column => $definition) {
         if ($column !== 'id') {
@@ -60,7 +61,7 @@ class Schema {
       // Get current columns.
       $stmt = self::$pdo->prepare("PRAGMA table_info(?)");
       $stmt->execute([$table]);
-      $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      $columns = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
       // Get existing column names.
       $existingCols = array_column($columns, 'name');
@@ -80,6 +81,14 @@ class Schema {
         }
       }
     }
+  }
+
+  /**
+   * Drop table.
+   */
+  public static function dropTable($table) {
+    $stmt = self::$pdo->prepare("DROP TABLE IF EXISTS ?");
+    $stmt->execute([$table]);
   }
 
 }

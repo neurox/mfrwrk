@@ -2,8 +2,6 @@
 
 namespace Core;
 
-use ORM;
-
 /**
  * Database class.
  */
@@ -19,16 +17,16 @@ class DB {
       $dbPath = $config['path'];
       $dir = dirname($dbPath);
 
-      // Ensure the directory exists
+      // Ensure the directory exists.
       if (!is_dir($dir)) {
-        mkdir($dir, 0755, true);
+        mkdir($dir, 0755, TRUE);
       }
 
       $isFirstRun = !file_exists($dbPath);
 
-      // Configure Idiorm
-      ORM::configure('sqlite:' . $dbPath);
-      ORM::configure('return_result_sets', true);
+      // Configure Idiorm.
+      \ORM::configure('sqlite:' . $dbPath);
+      \ORM::configure('return_result_sets', TRUE);
     }
   }
 
@@ -36,7 +34,7 @@ class DB {
    * Get database connection.
    */
   public static function get() {
-    return ORM::get_db();
+    return \ORM::get_db();
   }
 
 }

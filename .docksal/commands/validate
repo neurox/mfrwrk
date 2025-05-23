@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+## Docksal command for running PHPStan with Xdebug temporarily disabled
+
+#: exec_target = cli
+#: help = "Run PHPStan analysis with Xdebug temporarily disabled for better performance"
+
+# Initialize colors
+yellow='\033[1;33m'
+green='\033[0;32m'
+red='\033[0;31m'
+NC='\033[0m'
+
+# Main execution flow
+main() {
+  # Parse command line options
+  local PHPSTAN_ARGS="$@"
+
+  # If no arguments passed, use default settings
+  if [[ -z "$PHPSTAN_ARGS" ]]; then
+    PHPSTAN_ARGS="analyze"
+  fi
+
+  # Using PHP.ini approach instead of moving files
+  echo -e "${yellow}Temporarily disabling Xdebug...${NC}"
+
+  # Create a temporary PHP ini file to disable Xdebug for this run only
+  TEMP_INI_FILE=$(mktemp)
+  echo "xdebug.mode=off" > "$TEMP_INI_FILE"
+
+  echo -e "${green}Xdebug disabled successfully.${NC}"
+
+  # Run PHPStan with the temporary ini file
+  echo -e "${yellow}Running PHPStan with arguments: ${PHPSTAN_ARGS}${NC}"
+
+  # Execute PHPStan with PHP using our custom INI file
+  # Redirect Xdebug startup messages to /dev/null to avoid noise
+  php -n -c "$TEMP_INI_FILE" $(which phpstan) $PHPSTAN_ARGS 2> >(grep -v "Xdebug: \[Step Debug\]" >&2)
+  PHPSTAN_EXIT_CODE=$?
+
+  php -n -c "$TEMP_INI_FILE" $(which phpcs) 2> >(grep -v "Xdebug: \[Step Debug\]" >&2)
+  PHPCS_EXIT_CODE=$?
+
+  # Clean up
+  rm "$TEMP_INI_FILE"
+
+  # Print summary
+  if [ $PHPSTAN_EXIT_CODE -eq 0 ]; then
+      echo -e "${green}PHPStan analysis completed successfully!${NC}"
+  else
+      echo -e "${red}PHPStan analysis completed with errors. Exit code: ${PHPSTAN_EXIT_CODE}${NC}"
+  fi
+
+  # Print summary
+  if [ $PHPCS_EXIT_CODE -eq 0 ]; then
+      echo -e "${green}PHPCS analysis completed successfully!${NC}"
+  else
+      echo -e "${red}PHPCS analysis completed with errors. Exit code: ${PHPCS_EXIT_CODE}${NC}"
+  fi
+
+  # Return the PHPStan exit code
+  return $PHPSTAN_EXIT_CODE
+}
+
+# Execute script
+main "$@"
