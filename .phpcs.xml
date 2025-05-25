@@ -1,9 +1,32 @@
 <?xml version="1.0"?>
 <ruleset name="MFRWRK Standards">
-  <rule ref="Drupal" />
+  <description>MFRWRK Coding Standards - Drupal for PHP only, with deprecated rules removed.</description>
+
+  <arg name="extensions" value="php"/>
   <file>config</file>
   <file>src</file>
-  <file>public</file>
+  <file>public/index.php</file>
   <exclude-pattern>*/vendor/*</exclude-pattern>
   <exclude-pattern>*/public/assets/*</exclude-pattern>
+  <exclude-pattern>*/src/sass/*</exclude-pattern>
+
+  <rule ref="Drupal">
+    <exclude name="Drupal.CSS"/>
+    <exclude name="Drupal.Files.LineLength.CSS"/>
+    <exclude name="Drupal.InfoFiles"/>
+    <exclude name="Drupal.WhiteSpace.OpenTagNewline.Js"/>
+    <exclude name="MySource.Debug.DebugCode"/>
+    <exclude name="Squiz.CSS.ClassDefinitionClosingBraceSpace"/>
+    <exclude name="Squiz.CSS.ClassDefinitionOpeningBraceSpace"/>
+    <exclude name="Squiz.CSS.ColonSpacing"/>
+    <exclude name="Squiz.CSS.DisallowMultipleStyleDefinitions"/>
+    <exclude name="Squiz.CSS.EmptyClassDefinition"/>
+    <exclude name="Squiz.CSS.EmptyStyleDefinition"/>
+    <exclude name="Squiz.CSS.Indentation"/>
+    <exclude name="Squiz.CSS.MissingColon"/>
+    <exclude name="Squiz.CSS.SemicolonSpacing"/>
+    <exclude name="Squiz.WhiteSpace.LanguageConstructSpacing"/>
+  </rule>
+
+  <rule ref="Generic.WhiteSpace.LanguageConstructSpacing"/>
 </ruleset>

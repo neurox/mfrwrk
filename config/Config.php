@@ -29,6 +29,9 @@ class Config {
 
     // Initialize configuration.
     self::$config = [
+      'site' => [
+        'name' => $_ENV['APP_NAME'] ?? 'MFRWRK',
+      ],
       'env' => $_ENV['APP_ENV'] ?? 'production',
       'debug' => filter_var($_ENV['APP_DEBUG'] ?? FALSE, FILTER_VALIDATE_BOOLEAN),
       'db' => [

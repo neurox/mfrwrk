@@ -2,8 +2,9 @@
 
 namespace Modules\Auth;
 
-use Core\Schema;
+use Config\Config;
 use Core\BaseModule;
+use Core\Schema;
 use Modules\Auth\Helpers\UserHelper;
 
 /**
@@ -38,6 +39,7 @@ class Module extends BaseModule {
       $twig->addGlobal('user_is_logged', $userHelper->isUserLogged());
       $twig->addGlobal('user_is_admin', $userHelper->isAdmin());
       $twig->addGlobal('user_data', $userHelper->getUserData());
+      $twig->addGlobal('site', Config::get('site'));
     });
 
     // Start session.

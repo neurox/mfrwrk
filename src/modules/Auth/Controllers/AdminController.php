@@ -25,17 +25,10 @@ class AdminController extends BaseController {
    * Display the admin dashboard.
    */
   public function dashboard() {
-
-    // Check if user is admin.
-    if ($this->userHelper->isAdmin()) {
-      self::render('@Auth/admin-dashboard.html.twig', [
-        'title' => 'Dashboard',
-        'user_data' => $this->userHelper->getUserData(),
-      ]);
-    }
-    else {
-      self::redirect('/auth/login');
-    }
+    self::render('@Auth/admin-dashboard.html.twig', [
+      'title' => 'Dashboard',
+      'user_data' => $this->userHelper->getUserData(),
+    ]);
   }
 
   /**

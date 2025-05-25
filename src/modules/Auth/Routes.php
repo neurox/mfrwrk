@@ -2,6 +2,8 @@
 
 namespace Modules\Auth;
 
+use Modules\Auth\Helpers\UserHelper;
+
 /**
  * Auth module routes.
  */
@@ -24,7 +26,16 @@ class Routes {
     \Flight::group('/admin', function () {
       \Flight::route('GET /dashboard', ['\Modules\Auth\Controllers\AdminController', 'dashboard']);
       \Flight::route('GET /account', ['\Modules\Auth\Controllers\AdminController', 'account']);
-    });
+    },
+    [
+      function () {
+        // Check if user is admin before proceeding.
+        if (!UserHelper::isUserLogged()) {
+          \Flight::redirect('/auth/login');
+        }
+        return TRUE;
+      },
+    ]);
   }
 
 }

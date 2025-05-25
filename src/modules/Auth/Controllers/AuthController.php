@@ -33,19 +33,15 @@ class AuthController extends BaseController {
   public function loginForm() {
     // Check if user is already logged in.
     if ($this->userHelper->isUserLogged()) {
-      self::render('@Auth/admin-dashboard.html.twig', [
-        'title' => 'Dashboard',
-        'user_data' => $this->userHelper->getUserData(),
-      ]);
+      self::redirect('/admin/dashboard');
     }
-    else {
-      // Render the login form.
-      self::render('@Auth/login.html.twig', [
-        'title' => 'Login',
-        'errors' => self::input('errors'),
-        'csrf_token' => Validation::generateCsrfToken(),
-      ]);
-    }
+
+    // Render the login form.
+    self::render('@Auth/login.html.twig', [
+      'title' => 'Login',
+      'errors' => self::input('errors'),
+      'csrf_token' => Validation::generateCsrfToken(),
+    ]);
   }
 
   /**
@@ -74,22 +70,20 @@ class AuthController extends BaseController {
     // If user is locked, show error message.
     if ($lockStatus['locked']) {
       $waitMinutes = ceil($lockStatus['wait_time'] / 60);
-      self::render('@Auth/login.html.twig', [
-        'title' => 'Login',
-        'error' => "Haz excedido el número máximo de intentos. Por favor, inténtalo de nuevo en {$waitMinutes} minutos.",
-        'csrf_token' => Validation::generateCsrfToken(),
-      ]);
+      $errors['username'] = "Haz excedido el número máximo de intentos. Por favor, inténtalo de nuevo en {$waitMinutes} minutos.";
     }
 
-    $rules = [
-      'csrf_token' => 'csrf_token',
-      'username' => 'required',
-      'password' => 'required',
-    ];
+    if (!$lockStatus['locked']) {
+      $rules = [
+        'csrf_token' => 'csrf_token',
+        'username' => 'required',
+        'password' => 'required',
+      ];
 
-    // Validate form data.
-    $validation = Validation::validate($data, $rules);
-    $errors = Validation::getErrors();
+      // Validate form data.
+      $validation = Validation::validate($data, $rules);
+      $errors = Validation::getErrors();
+    }
 
     // If no errors, check if user exists and password is correct.
     if (empty($errors)) {
@@ -119,15 +113,14 @@ class AuthController extends BaseController {
         $errors['username'] = 'El nombre de usuario y/o contraseña son incorrectos';
       }
     }
-    else {
-      // Redirect to login page with error message.
-      self::render('@Auth/login.html.twig', [
-        'title' => 'Login',
-        'old' => $data,
-        'errors' => $errors,
-        'csrf_token' => Validation::generateCsrfToken(),
-      ]);
-    }
+
+    // Redirect to login page with error message.
+    self::render('@Auth/login.html.twig', [
+      'title' => 'Login',
+      'old' => $data,
+      'errors' => $errors,
+      'csrf_token' => Validation::generateCsrfToken(),
+    ]);
   }
 
   /**

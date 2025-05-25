@@ -3,126 +3,124 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
+  <div class="col-lg-6">
+    <h1 class="m-5">{{ title }}</h1>
 
-<div class="col-lg-6">
-  <h1 class="m-5">{{ title }}</h1>
+    {% if errors.csrf_token %}
+      <div class="alert alert-danger" role="alert">
+        {{ errors.csrf_token }}
+      </div>
+    {% endif %}
 
-  {% if errors.csrf_token %}
-    <div class="alert alert-danger" role="alert">
-      {{ errors.csrf_token }}
-    </div>
-  {% endif %}
+    <form method="post" action="/auth/register">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control {% if errors.firstName %}is-invalid{% endif %}"
+              id="firstName"
+              name="firstName"
+              placeholder="Nombre de usuario"
+              value="{{ old.firstName|default('') }}"
+            >
+            <label for="firstName">Nombre</label>
+            <div id="validationFirstNameFeedback" class="invalid-feedback">
+              {{ errors.firstName }}
+            </div>
+          </div>
+        </div>
 
-  <form method="post" action="/auth/register">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-    <div class="row">
-      <div class="col-lg-6">
-        <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control {% if errors.firstName %}is-invalid{% endif %}"
-            id="firstName"
-            name="firstName"
-            placeholder="Nombre de usuario"
-            value="{{ old.firstName|default('') }}"
-          >
-          <label for="firstName">Nombre</label>
-          <div id="validationFirstNameFeedback" class="invalid-feedback">
-            {{ errors.firstName }}
+        <div class="col-lg-6">
+          <div class="form-floating mb-3">
+            <input
+              type="text"
+              class="form-control {% if errors.lastName %}is-invalid{% endif %}"
+              id="lastName"
+              name="lastName"
+              placeholder="Nombre de usuario"
+              value="{{ old.lastName|default('') }}"
+            >
+            <label for="lastName">Apellido</label>
+            <div id="validationLastNameFeedback" class="invalid-feedback">
+              {{ errors.lastName }}
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="col-lg-6">
-        <div class="form-floating mb-3">
-          <input
-            type="text"
-            class="form-control {% if errors.lastName %}is-invalid{% endif %}"
-            id="lastName"
-            name="lastName"
-            placeholder="Nombre de usuario"
-            value="{{ old.lastName|default('') }}"
-          >
-          <label for="lastName">Apellido</label>
-          <div id="validationLastNameFeedback" class="invalid-feedback">
-            {{ errors.lastName }}
+      <div class="form-floating mb-3 align-self-start">
+        <input
+          type="text"
+          class="form-control {% if errors.username %}is-invalid{% endif %}"
+          id="username"
+          name="username"
+          placeholder="Nombre de usuario"
+          value="{{ old.username|default('') }}"
+        >
+        <label for="username">Nombre de Usuario</label>
+        <div id="usernameHelp" class="form-text">Sin espacios, sin caracteres especiales.</div>
+        <div id="validationUsernameFeedback" class="invalid-feedback">
+          {{ errors.username }}
+        </div>
+      </div>
+
+      <div class="form-floating mb-3">
+        <input
+          type="text"
+          class="form-control {% if errors.email %}is-invalid{% endif %}"
+          id="email"
+          name="email"
+          placeholder="name@example.com"
+          value="{{ old.email|default('') }}"
+        >
+        <label for="email">Email</label>
+        <div id="validationEmailFeedback" class="invalid-feedback">
+          {{ errors.email }}
+        </div>
+      </div>
+
+      <div class="form-floating mb-3">
+        <input
+          type="password"
+          class="form-control {% if errors.password %}is-invalid{% endif %}"
+          id="password"
+          name="password"
+          placeholder="Password"
+          value="{{ old.password|default('') }}"
+        >
+        <label for="password">Contraseña</label>
+        <div id="validationPasswordFeedback" class="invalid-feedback">
+          {{ errors.password }}
+        </div>
+      </div>
+
+      <div class="form-floating mb-3">
+        <input
+          type="password"
+          class="form-control {% if errors.password_confirmation %}is-invalid{% endif %}"
+          id="password_confirmation"
+          name="password_confirmation"
+          placeholder="Password"
+          value="{{ old.password_confirmation|default('') }}"
+        >
+        <label for="password_confirmation">Confirmar contraseña</label>
+        <div id="validationPasswordFeedback" class="invalid-feedback">
+          {{ errors.password_confirmation }}
+        </div>
+      </div>
+      <div class="row justify-content-md-center align-items-center">
+          <div class="col-lg-6 d-grid gap-2">
+            <button type="submit" class="btn btn-lg btn-primary">Crear Usuario</button>
           </div>
-        </div>
+          <div class="col-lg-6 d-flex justify-content-center align-items-center">
+            <span>
+              Ya estas registrado?
+              <a class="btn btn-link" href="/auth/login" role="button">Iniciar Sesión</a>
+            </span>
+          </div>
       </div>
-    </div>
-
-    <div class="form-floating mb-3 align-self-start">
-      <input
-        type="text"
-        class="form-control {% if errors.username %}is-invalid{% endif %}"
-        id="username"
-        name="username"
-        placeholder="Nombre de usuario"
-        value="{{ old.username|default('') }}"
-      >
-      <label for="username">Nombre de Usuario</label>
-      <div id="usernameHelp" class="form-text">Sin espacios, sin caracteres especiales.</div>
-      <div id="validationUsernameFeedback" class="invalid-feedback">
-        {{ errors.username }}
-      </div>
-    </div>
-
-    <div class="form-floating mb-3">
-      <input
-        type="text"
-        class="form-control {% if errors.email %}is-invalid{% endif %}"
-        id="email"
-        name="email"
-        placeholder="name@example.com"
-        value="{{ old.email|default('') }}"
-      >
-      <label for="email">Email</label>
-      <div id="validationEmailFeedback" class="invalid-feedback">
-        {{ errors.email }}
-      </div>
-    </div>
-
-    <div class="form-floating mb-3">
-      <input
-        type="password"
-        class="form-control {% if errors.password %}is-invalid{% endif %}"
-        id="password"
-        name="password"
-        placeholder="Password"
-        value="{{ old.password|default('') }}"
-      >
-      <label for="password">Contraseña</label>
-      <div id="validationPasswordFeedback" class="invalid-feedback">
-        {{ errors.password }}
-      </div>
-    </div>
-
-    <div class="form-floating mb-3">
-      <input
-        type="password"
-        class="form-control {% if errors.password_confirmation %}is-invalid{% endif %}"
-        id="password_confirmation"
-        name="password_confirmation"
-        placeholder="Password"
-        value="{{ old.password_confirmation|default('') }}"
-      >
-      <label for="password_confirmation">Confirmar contraseña</label>
-      <div id="validationPasswordFeedback" class="invalid-feedback">
-        {{ errors.password_confirmation }}
-      </div>
-    </div>
-    <div class="row justify-content-md-center align-items-center">
-        <div class="col-lg-6 d-grid gap-2">
-          <button type="submit" class="btn btn-lg btn-primary">Crear Usuario</button>
-        </div>
-        <div class="col-lg-6 d-flex justify-content-center align-items-center">
-          <span>
-            Ya estas registrado?
-            <a class="btn btn-link" href="/auth/login" role="button">Iniciar Sesión</a>
-          </span>
-        </div>
-    </div>
-  </form>
-</div>
-
+    </form>
+  </div>
 {% endblock %}
