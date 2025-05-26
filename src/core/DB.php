@@ -1,6 +1,6 @@
 <?php
 
-namespace Core;
+namespace Neurox\Mfrwrk\Core;
 
 /**
  * Database class.

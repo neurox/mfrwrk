@@ -1,6 +1,6 @@
 <?php
 
-namespace Config;
+namespace Neurox\Mfrwrk\Core;
 
 use Dotenv\Dotenv;
 
@@ -22,7 +22,7 @@ class Config {
   /**
    * Load environment variables and initialize configuration.
    */
-  public static function load(string $basePath = __DIR__ . '/../'): void {
+  public static function load(string $basePath = __DIR__ . '/../../'): void {
     // Load environment variables.
     $dotenv = Dotenv::createImmutable($basePath);
     $dotenv->load();

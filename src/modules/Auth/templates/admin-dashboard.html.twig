@@ -2,8 +2,10 @@
 
 {% block title %}{{ title }}{% endblock %}
 
-{% block content %}
-  <h1 class="m-5">{{ title }}</h1>
+{% block header %}
+  <h1 class="h2">{{ title }}</h1>
+{% endblock %}
 
+{% block content %}
   <p>Bienvenido {{ user_data.name }}</p>
 {% endblock %}

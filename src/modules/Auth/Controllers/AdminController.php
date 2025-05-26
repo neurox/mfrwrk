@@ -1,9 +1,9 @@
 <?php
 
-namespace Modules\Auth\Controllers;
+namespace Neurox\Mfrwrk\Modules\Auth\Controllers;
 
-use Core\BaseController;
-use Modules\Auth\Helpers\UserHelper;
+use Neurox\Mfrwrk\Core\BaseController;
+use Neurox\Mfrwrk\Modules\Auth\Helpers\UserHelper;
 
 /**
  * Controller for admin sections.
@@ -26,7 +26,7 @@ class AdminController extends BaseController {
    */
   public function dashboard() {
     self::render('@Auth/admin-dashboard.html.twig', [
-      'title' => 'Dashboard',
+      'title' => 'Panel de control',
       'user_data' => $this->userHelper->getUserData(),
     ]);
   }

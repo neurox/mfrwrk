@@ -5,8 +5,8 @@
  * Main app file.
  */
 
-use Core\DB;
-use Config\Config;
+use Neurox\Mfrwrk\Core\DB;
+use Neurox\Mfrwrk\Core\Config;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
@@ -57,7 +57,7 @@ function load_modules(): array {
       $modulePath = $modulesPath . '/' . $dir;
       if (is_dir($modulePath) && file_exists($modulePath . '/Module.php')) {
         require_once $modulePath . '/Module.php';
-        $moduleClass = "\\Modules\\{$dir}\\Module";
+        $moduleClass = "\\Neurox\\Mfrwrk\\Modules\\{$dir}\\Module";
         $modules[$dir] = $moduleClass;
       }
     }

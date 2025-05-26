@@ -1,15 +1,15 @@
 <?php
 
-namespace Modules\Auth\Controllers;
+namespace Neurox\Mfrwrk\Modules\Auth\Controllers;
 
-use Core\BaseController;
-use Core\Validation;
-use Modules\Auth\Helpers\UserHelper;
+use Neurox\Mfrwrk\Core\BaseController;
+use Neurox\Mfrwrk\Core\Validation;
+use Neurox\Mfrwrk\Modules\Auth\Helpers\UserHelper;
 
 /**
  * Autentication of the user.
  *
- * @package Modules\Auth\Controllers
+ * @package Neurox\Mfrwrk\Modules\Auth\Controllers
  */
 class AuthController extends BaseController {
 

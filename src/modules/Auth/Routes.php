@@ -1,8 +1,10 @@
 <?php
 
-namespace Modules\Auth;
+namespace Neurox\Mfrwrk\Modules\Auth;
 
-use Modules\Auth\Helpers\UserHelper;
+use Neurox\Mfrwrk\Modules\Auth\Helpers\UserHelper;
+use Neurox\Mfrwrk\Modules\Auth\Controllers\AuthController;
+use Neurox\Mfrwrk\Modules\Auth\Controllers\AdminController;
 
 /**
  * Auth module routes.
@@ -16,16 +18,16 @@ class Routes {
 
     // Auth group.
     \Flight::group('/auth', function () {
-      \Flight::route('GET /login', ['\Modules\Auth\Controllers\AuthController', 'loginForm']);
-      \Flight::route('GET /register', ['\Modules\Auth\Controllers\AuthController', 'registerForm']);
-      \Flight::route('GET /logout', ['\Modules\Auth\Controllers\AuthController', 'logout']);
-      \Flight::route('POST /register', ['\Modules\Auth\Controllers\AuthController', 'register']);
-      \Flight::route('POST /login', ['\Modules\Auth\Controllers\AuthController', 'login']);
+      \Flight::route('GET /login', [AuthController::class, 'loginForm']);
+      \Flight::route('GET /register', [AuthController::class, 'registerForm']);
+      \Flight::route('GET /logout', [AuthController::class, 'logout']);
+      \Flight::route('POST /register', [AuthController::class, 'register']);
+      \Flight::route('POST /login', [AuthController::class, 'login']);
     });
 
     \Flight::group('/admin', function () {
-      \Flight::route('GET /dashboard', ['\Modules\Auth\Controllers\AdminController', 'dashboard']);
-      \Flight::route('GET /account', ['\Modules\Auth\Controllers\AdminController', 'account']);
+      \Flight::route('GET /dashboard', [AdminController::class, 'dashboard']);
+      \Flight::route('GET /account', [AdminController::class, 'account']);
     },
     [
       function () {

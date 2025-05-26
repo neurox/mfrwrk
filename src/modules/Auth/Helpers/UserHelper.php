@@ -1,8 +1,8 @@
 <?php
 
-namespace Modules\Auth\Helpers;
+namespace Neurox\Mfrwrk\Modules\Auth\Helpers;
 
-use Core\BaseController;
+use Neurox\Mfrwrk\Core\BaseController;
 
 /**
  * User helper class.

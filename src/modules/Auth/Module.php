@@ -1,11 +1,11 @@
 <?php
 
-namespace Modules\Auth;
+namespace Neurox\Mfrwrk\Modules\Auth;
 
-use Config\Config;
-use Core\BaseModule;
-use Core\Schema;
-use Modules\Auth\Helpers\UserHelper;
+use Neurox\Mfrwrk\Core\Config;
+use Neurox\Mfrwrk\Core\BaseModule;
+use Neurox\Mfrwrk\Core\Schema;
+use Neurox\Mfrwrk\Modules\Auth\Helpers\UserHelper;
 
 /**
  * Auth module.
